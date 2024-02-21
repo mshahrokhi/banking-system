@@ -1,10 +1,23 @@
 package com.shahrokhi.bankingsystem.service;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class TransactionLogger implements TransactionObserver {
+    private static final String LOG_FILE_PATH = "F:/temp/BankSystem/transactions_log.txt";
+
     @Override
     public void onTransaction(String accountNumber, String transactionType, double amount) {
-        // Implement write logging to a file
-        System.out.println("Transaction: Account=" + accountNumber +
-                ", Type=" + transactionType + ", Amount=" + amount);
+        String logMessage = String.format("Account: %s, Type: %s, Amount: %.2f",
+                accountNumber, transactionType, amount);
+        appendToFile(logMessage);
+    }
+
+    private synchronized void appendToFile(String logMessage) {
+        try (FileWriter writer = new FileWriter(LOG_FILE_PATH, true)) {
+            writer.write(logMessage + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
