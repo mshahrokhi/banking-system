@@ -5,40 +5,36 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.context.annotation.Primary;
 
-import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @ToString
 @NoArgsConstructor
 public class Account {
+    private static final AtomicLong accountNumberCounter = new AtomicLong(1);
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
+    @Getter
     @Column(unique = true)
     private String accountNumber;
+    @Getter
     private String holderName;
     private double balance;
 
-    public Account(String holderName, double initialBalance) {
-        this.accountNumber = generateAccountNumber();
+    public Account(Bank bank, String holderName, double initialBalance) {
+        this.bank = bank;
+        this.accountNumber = generateAccountNumber(bank);
         this.holderName = holderName;
         this.balance = initialBalance;
-    }
-
-    // Custom method to generate a unique account number
-    private String generateAccountNumber() {
-        return "ACCT-" + String.format("%06d", new Random().nextInt(1000000));
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public String getHolderName() {
-        return holderName;
     }
 
     public synchronized double getBalance() {
@@ -55,5 +51,10 @@ public class Account {
             return true;
         }
         return false;
+    }
+
+    // Custom method to generate a unique account number
+    private String generateAccountNumber(Bank bank) {
+        return "Bank-" + bank.getId() + "-Account-" + String.format("%06d", accountNumberCounter.getAndIncrement());
     }
 }
