@@ -1,4 +1,4 @@
-package com.shahrokhi.bankingsystem.service.Transaction;
+package com.shahrokhi.bankingsystem.service.transaction;
 
 import com.shahrokhi.bankingsystem.entity.Account;
 

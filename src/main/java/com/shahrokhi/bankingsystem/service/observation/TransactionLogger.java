@@ -1,10 +1,10 @@
-package com.shahrokhi.bankingsystem.service;
+package com.shahrokhi.bankingsystem.service.observation;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class TransactionLogger implements TransactionObserver {
-    private static final String LOG_FILE_PATH = "F:/temp/BankSystem/transactions_log.txt";
+    private static final String LOG_FILE_PATH = "transactions_log.txt";
 
     @Override
     public void onTransaction(String accountNumber, String transactionType, double amount) {

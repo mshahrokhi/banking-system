@@ -1,4 +1,4 @@
-package com.shahrokhi.bankingsystem.service;
+package com.shahrokhi.bankingsystem.service.observation;
 
 import java.util.ArrayList;
 import java.util.List;
