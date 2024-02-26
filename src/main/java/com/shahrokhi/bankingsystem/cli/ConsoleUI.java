@@ -1,4 +1,4 @@
-package com.shahrokhi.bankingsystem.controller;
+package com.shahrokhi.bankingsystem.cli;
 
 import com.shahrokhi.bankingsystem.entity.Account;
 import com.shahrokhi.bankingsystem.entity.Bank;
@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Component
 public class ConsoleUI implements CommandLineRunner {
@@ -88,6 +90,7 @@ public class ConsoleUI implements CommandLineRunner {
                 case 0:
                     System.out.println("Exiting the application. Goodbye!");
                     scanner.close();
+                    bankService.shutdown();
                     System.exit(0);
                     break;
 
@@ -109,17 +112,36 @@ public class ConsoleUI implements CommandLineRunner {
 
             switch (transactionType.toLowerCase()) {
                 case "deposit":
-                    bankService.deposit(account, amount);
-                    System.out.println("Deposit successful. Updated balance: "
-                            + bankService.getBalance(account));
+                    Future<Boolean> depositResult = bankService.depositAsync(account, amount);
+                    System.out.println("Deposit in progress...");
+                    try {
+                        boolean success = depositResult.get();
+                        if(success) {
+                            System.out.println("Deposit successful. Updated balance: "
+                                    + bankService.getBalance(account));
+                        } else {
+                            System.out.println("Deposit failed!");
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                        System.out.println("An error occurred during the deposit");
+                    }
                     break;
 
                 case "withdraw":
-                    if(bankService.withdraw(account, amount)) {
-                        System.out.println("Withdrawal successful. Updated balance: "
-                                + bankService.getBalance(account));
-                    } else {
-                        System.out.println("Withdrawal failed, Insufficient balance!");
+                    Future<Boolean> withdrawResult = bankService.withdrawAsync(account, amount);
+                    System.out.println("Withdraw in progress...");
+                    try {
+                        boolean success = withdrawResult.get();
+                        if(success) {
+                            System.out.println("Withdrawal successful. Updated balance: "
+                                    + bankService.getBalance(account));
+                        } else {
+                            System.out.println("Withdrawal failed, Insufficient balance!");
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                        System.out.println("An error occurred during the withdraw");
                     }
                     break;
 
@@ -147,16 +169,24 @@ public class ConsoleUI implements CommandLineRunner {
             System.out.print("Enter transfer amount: ");
             double amount = scanner.nextDouble();
 
-            if(bankService.transfer(fromAccount, toAccount, amount)) {
-                System.out.println("Transfer successful.");
-                System.out.println("Updated balance for source account (" + fromAccountNumber + "): "
-                        + bankService.getBalance(fromAccount));
-                System.out.println("Updated balance for destination account (" + toAccountNumber + "): "
-                        + bankService.getBalance(toAccount));
-            } else {
-                System.out.println("Transfer failed, Insufficient balance!");
-            }
+            Future<Boolean> transferResult = bankService.transferAsync(fromAccount, toAccount, amount);
+            System.out.println("Transfer in progress...");
 
+            try {
+                boolean success = transferResult.get();
+                if(success) {
+                    System.out.println("Transfer successful.");
+                    System.out.println("Updated balance for source account (" + fromAccountNumber + "): "
+                            + bankService.getBalance(fromAccount));
+                    System.out.println("Updated balance for destination account (" + toAccountNumber + "): "
+                            + bankService.getBalance(toAccount));
+                } else {
+                    System.out.println("Transfer failed, Insufficient balance!");
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                System.out.println("An error occurred during the transfer");
+            }
         } else {
             System.out.println("One or both accounts not found!");
         }
