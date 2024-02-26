@@ -63,7 +63,7 @@ public class ConsoleUI implements CommandLineRunner {
                         System.out.print("Enter initial balance: ");
                         double initialBalance = scanner.nextDouble();
 
-                        Account account = bankService.createAccount(bank, accountHolderName, initialBalance);
+                        Account account = accountService.createAccount(bank, accountHolderName, initialBalance);
                         System.out.println("Account created with Account Number: " + account.getAccountNumber());
                     } else {
                         System.out.println("Bank with ID " + bankId + " not found.");

@@ -46,10 +46,6 @@ public class BankService implements TransactionObservable {
         return bankRepository.findById(bankId);
     }
 
-    public Account createAccount(Bank bank, String accountHolderName, double initialBalance) {
-        return accountService.createAccount(bank, accountHolderName, initialBalance);
-    }
-
     public synchronized double getBalance(Account account) {
         return account.getBalance();
     }
