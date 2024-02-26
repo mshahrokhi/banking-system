@@ -1,4 +1,4 @@
-package com.shahrokhi.bankingsystem.entity;
+package com.shahrokhi.bankingsystem.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
