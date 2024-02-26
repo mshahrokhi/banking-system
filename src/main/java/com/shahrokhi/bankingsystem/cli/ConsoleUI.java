@@ -33,7 +33,7 @@ public class ConsoleUI implements CommandLineRunner {
             System.out.println("==================================================");
             System.out.println("1. Create Bank");
             System.out.println("2. Create Account");
-            System.out.println("3. Check Balance");
+            System.out.println("3. Get Balance & Info");
             System.out.println("4. Deposit");
             System.out.println("5. Withdraw");
             System.out.println("6. Transfer");
@@ -72,7 +72,7 @@ public class ConsoleUI implements CommandLineRunner {
 
                 case 3:
                     scanner.nextLine(); // Consume the newline character
-                    checkBalance(scanner);
+                    getBalanceAndInfo(scanner);
                     break;
 
                 case 4:
@@ -192,13 +192,19 @@ public class ConsoleUI implements CommandLineRunner {
         }
     }
 
-    private void checkBalance(Scanner scanner) {
+    private void getBalanceAndInfo(Scanner scanner) {
         System.out.print("Enter account number: ");
         String accountNumber = scanner.next();
         Optional<Account> account = accountService.findByAccountNumber(accountNumber);
 
         if (account.isPresent()) {
-            System.out.println("Current balance for account " + accountNumber + ": "
+            System.out.println("Bank ID : "
+                    + account.get().getBank().getId());
+            System.out.println("Account number : "
+                    + accountNumber);
+            System.out.println("Account holder name : "
+                    + account.get().getHolderName());
+            System.out.println("Current balance : "
                     + bankService.getBalance(account.get()));
         } else {
             System.out.println("Account not found!");
