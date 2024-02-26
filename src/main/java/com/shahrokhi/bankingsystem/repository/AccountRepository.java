@@ -1,6 +1,6 @@
 package com.shahrokhi.bankingsystem.repository;
 
-import com.shahrokhi.bankingsystem.entity.Account;
+import com.shahrokhi.bankingsystem.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

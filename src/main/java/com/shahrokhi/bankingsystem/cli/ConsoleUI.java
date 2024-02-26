@@ -1,7 +1,7 @@
 package com.shahrokhi.bankingsystem.cli;
 
-import com.shahrokhi.bankingsystem.entity.Account;
-import com.shahrokhi.bankingsystem.entity.Bank;
+import com.shahrokhi.bankingsystem.model.Account;
+import com.shahrokhi.bankingsystem.model.Bank;
 import com.shahrokhi.bankingsystem.service.AccountService;
 import com.shahrokhi.bankingsystem.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;

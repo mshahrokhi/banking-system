@@ -1,14 +1,14 @@
 package com.shahrokhi.bankingsystem.service;
 
-import com.shahrokhi.bankingsystem.entity.Account;
-import com.shahrokhi.bankingsystem.entity.Bank;
+import com.shahrokhi.bankingsystem.model.Account;
+import com.shahrokhi.bankingsystem.model.Bank;
 import com.shahrokhi.bankingsystem.repository.BankRepository;
-import com.shahrokhi.bankingsystem.service.transaction.Deposit;
-import com.shahrokhi.bankingsystem.service.transaction.Transaction;
-import com.shahrokhi.bankingsystem.service.transaction.Withdraw;
-import com.shahrokhi.bankingsystem.service.observation.TransactionLogger;
-import com.shahrokhi.bankingsystem.service.observation.TransactionObservable;
-import com.shahrokhi.bankingsystem.service.observation.TransactionObserver;
+import com.shahrokhi.bankingsystem.service.transactionType.Deposit;
+import com.shahrokhi.bankingsystem.service.transactionType.TransactionType;
+import com.shahrokhi.bankingsystem.service.transactionType.Withdraw;
+import com.shahrokhi.bankingsystem.service.transactionObservation.TransactionLogger;
+import com.shahrokhi.bankingsystem.service.transactionObservation.TransactionObservable;
+import com.shahrokhi.bankingsystem.service.transactionObservation.TransactionObserver;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +77,10 @@ public class BankService implements TransactionObservable {
         return false;
     }
 
-    private boolean performTransaction(Account account, double amount, Transaction transaction) {
-        if(transaction.execute(account, amount)) {
+    private boolean performTransaction(Account account, double amount, TransactionType transactionType) {
+        if(transactionType.execute(account, amount)) {
             accountService.save(account);
-            notifyObservers(account.getAccountNumber(), transaction.getClass().getSimpleName(), amount);
+            notifyObservers(account.getAccountNumber(), transactionType.getClass().getSimpleName(), amount);
             return true;
         }
         return false;

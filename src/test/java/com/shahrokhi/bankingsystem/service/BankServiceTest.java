@@ -1,10 +1,9 @@
 package com.shahrokhi.bankingsystem.service;
 
-import com.shahrokhi.bankingsystem.entity.Account;
-import com.shahrokhi.bankingsystem.entity.Bank;
-import com.shahrokhi.bankingsystem.repository.AccountRepository;
+import com.shahrokhi.bankingsystem.model.Account;
+import com.shahrokhi.bankingsystem.model.Bank;
 import com.shahrokhi.bankingsystem.repository.BankRepository;
-import com.shahrokhi.bankingsystem.service.observation.TransactionLogger;
+import com.shahrokhi.bankingsystem.service.transactionObservation.TransactionLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
