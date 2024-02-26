@@ -32,7 +32,7 @@ public class Account {
 
     public Account(Bank bank, String holderName, double initialBalance) {
         this.bank = bank;
-        this.accountNumber = generateAccountNumber(bank);
+        this.accountNumber = generateAccountNumber();
         this.holderName = holderName;
         this.balance = initialBalance;
     }
@@ -54,7 +54,7 @@ public class Account {
     }
 
     // Custom method to generate a unique account number
-    private String generateAccountNumber(Bank bank) {
-        return "Bank-" + bank.getId() + "-Account-" + String.format("%06d", accountNumberCounter.getAndIncrement());
+    private String generateAccountNumber() {
+        return "Account-" + String.format("%06d", accountNumberCounter.getAndIncrement());
     }
 }
