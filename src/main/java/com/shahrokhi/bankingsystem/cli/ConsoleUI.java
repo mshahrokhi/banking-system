@@ -37,6 +37,7 @@ public class ConsoleUI implements CommandLineRunner {
             System.out.println("4. Deposit");
             System.out.println("5. Withdraw");
             System.out.println("6. Transfer");
+            System.out.println("7. Count Bank Accounts");
             System.out.println("0. Exit");
 
             System.out.print("Enter your choice: ");
@@ -63,7 +64,7 @@ public class ConsoleUI implements CommandLineRunner {
                         System.out.print("Enter initial balance: ");
                         double initialBalance = scanner.nextDouble();
 
-                        Account account = accountService.createAccount(bank, accountHolderName, initialBalance);
+                        Account account = bankService.addAccount(bankId, accountHolderName, initialBalance);
                         System.out.println("Account created with Account Number: " + account.getAccountNumber());
                     } else {
                         System.out.println("Bank with ID " + bankId + " not found.");
@@ -85,6 +86,19 @@ public class ConsoleUI implements CommandLineRunner {
 
                 case 6:
                     performTransfer(scanner);
+                    break;
+
+                case 7:
+                    scanner.nextLine(); // Consume the newline character
+                    System.out.print("Enter bank ID: ");
+                    long bankID = scanner.nextLong();
+                    Optional<Bank> bankByID = bankService.findById(bankID);
+
+                    if (bankByID.isPresent()) {
+                        System.out.println("Account counter: " + bankService.countAccounts(bankID));
+                    } else {
+                        System.out.println("Bank with ID " + bankID + " not found.");
+                    }
                     break;
 
                 case 0:

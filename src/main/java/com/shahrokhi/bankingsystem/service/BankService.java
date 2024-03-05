@@ -3,16 +3,17 @@ package com.shahrokhi.bankingsystem.service;
 import com.shahrokhi.bankingsystem.model.Account;
 import com.shahrokhi.bankingsystem.model.Bank;
 import com.shahrokhi.bankingsystem.repository.BankRepository;
-import com.shahrokhi.bankingsystem.service.transactionType.Deposit;
-import com.shahrokhi.bankingsystem.service.transactionType.TransactionType;
-import com.shahrokhi.bankingsystem.service.transactionType.Withdraw;
 import com.shahrokhi.bankingsystem.service.transactionObservation.TransactionLogger;
 import com.shahrokhi.bankingsystem.service.transactionObservation.TransactionObservable;
 import com.shahrokhi.bankingsystem.service.transactionObservation.TransactionObserver;
+import com.shahrokhi.bankingsystem.service.transactionType.Deposit;
+import com.shahrokhi.bankingsystem.service.transactionType.TransactionType;
+import com.shahrokhi.bankingsystem.service.transactionType.Withdraw;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -40,6 +41,28 @@ public class BankService implements TransactionObservable {
 
     public Bank createBank() {
         return bankRepository.save(new Bank());
+    }
+
+    @Transactional
+    public Account addAccount(Long bankId, String accountHolderName, double initialBalance) {
+        Bank bank = findById(bankId).orElse(null);
+        if(bank != null) {
+            Account account = new Account(accountHolderName, initialBalance);
+            bank.addAccount(account);
+            accountService.save(account);
+            bankRepository.save(bank);
+            return account;
+        }
+        return null;
+    }
+
+    @Transactional
+    public Integer countAccounts(Long bankId) {
+        Bank bank = findById(bankId).orElse(null);
+        if(bank != null) {
+            return bank.getAccounts().size();
+        }
+        return null;
     }
 
     public Optional<Bank> findById(Long bankId) {

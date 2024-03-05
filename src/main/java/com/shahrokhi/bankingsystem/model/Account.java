@@ -1,10 +1,7 @@
 package com.shahrokhi.bankingsystem.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,7 +17,7 @@ public class Account {
 
     @Getter
     @Setter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_id")
     private Bank bank;
     @Getter
@@ -29,6 +26,12 @@ public class Account {
     @Getter
     private String holderName;
     private double balance;
+
+    public Account(String holderName, double initialBalance) {
+        this.accountNumber = generateAccountNumber();
+        this.holderName = holderName;
+        this.balance = initialBalance;
+    }
 
     public Account(Bank bank, String holderName, double initialBalance) {
         this.bank = bank;
