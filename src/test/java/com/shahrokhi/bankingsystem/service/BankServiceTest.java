@@ -10,6 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,14 +24,54 @@ public class BankServiceTest {
     @Mock
     private TransactionLogger transactionLogger;
 
+    @Mock
+    private BankRepository bankRepository;
+
+    @Mock
+    private AccountService accountService;
+
     @InjectMocks
     private BankService bankService;
 
     @BeforeEach
     public void setUp() {
-        transactionLogger = mock(TransactionLogger.class);
-        bankService = new BankService(mock(BankRepository.class), mock(AccountService.class));
         bankService.addObserver(transactionLogger);
+    }
+
+    @Test
+    public void testAddAccount() {
+        Bank bank = new Bank(1L, new HashSet<>());
+        when(bankRepository.findById(any(Long.class))).thenReturn(Optional.of(bank));
+        String accountHolderName = "Mohammad";
+        double initialBalance = 100.0;
+        Account account;
+        try {
+            account = bankService.addAccount(bank.getId(), accountHolderName, initialBalance);
+        } catch (Exception e) {
+            e.printStackTrace();
+            account = null;
+        }
+        assertNotNull(account);
+        assertEquals(1, bank.getAccounts().size());
+        verify(accountService).save(eq(account));
+        verify(bankRepository).save(eq(bank));
+    }
+
+
+    @Test
+    public void testCountAccounts() {
+        Bank bank = new Bank(1L, new HashSet<>());
+        when(bankRepository.findById(any(Long.class))).thenReturn(Optional.of(bank));
+        String accountHolderName = "Mohammad";
+        double initialBalance = 100.0;
+
+        try {
+            bankService.addAccount(bank.getId(), accountHolderName, initialBalance);
+            bankService.addAccount(bank.getId(), accountHolderName, initialBalance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertEquals(2, bankService.countAccounts(bank.getId()));
     }
 
     @Test
@@ -49,6 +92,7 @@ public class BankServiceTest {
 
         assertTrue(result);
         assertEquals(initialBalance - amount, account.getBalance(), 0.001);
+        verify(accountService).save(eq(account));
         verify(transactionLogger).onTransaction(eq(account.getAccountNumber()), eq("Withdraw"), eq(amount));
     }
 
@@ -90,6 +134,7 @@ public class BankServiceTest {
 
         assertTrue(result);
         assertEquals(initialBalance + amount, account.getBalance(), 0.001);
+        verify(accountService).save(eq(account));
         verify(transactionLogger).onTransaction(eq(account.getAccountNumber()), eq("Deposit"), eq(amount));
     }
 
@@ -114,6 +159,8 @@ public class BankServiceTest {
         assertTrue(result);
         assertEquals(initialBalance - amount, fromAccount.getBalance(), 0.001);
         assertEquals(initialBalance + amount, toAccount.getBalance(), 0.001);
+        verify(accountService).save(eq(fromAccount));
+        verify(accountService).save(eq(toAccount));
         verify(transactionLogger).onTransaction(eq(fromAccount.getAccountNumber()), eq("Withdraw"), eq(amount));
         verify(transactionLogger).onTransaction(eq(toAccount.getAccountNumber()), eq("Deposit"), eq(amount));
     }

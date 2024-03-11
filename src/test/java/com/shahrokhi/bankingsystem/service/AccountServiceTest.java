@@ -1,7 +1,6 @@
 package com.shahrokhi.bankingsystem.service;
 
 import com.shahrokhi.bankingsystem.model.Account;
-import com.shahrokhi.bankingsystem.model.Bank;
 import com.shahrokhi.bankingsystem.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +10,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
@@ -22,24 +23,6 @@ public class AccountServiceTest {
 
     @InjectMocks
     private AccountService accountService;
-
-    @Test
-    public void testCreateAccount() {
-        String accountHolderName = "Mohammad";
-        double initialBalance = 100.0;
-        Bank bank = new Bank();
-        Account account = new Account(bank, accountHolderName, initialBalance);
-
-        when(accountRepository.save(any(Account.class))).thenReturn(account);
-        Account createdAccount = accountService.createAccount(bank, accountHolderName, initialBalance);
-
-        assertNotNull(createdAccount);
-        assertNotNull(createdAccount.getAccountNumber());
-        assertEquals(accountHolderName, createdAccount.getHolderName());
-        assertEquals(initialBalance, createdAccount.getBalance(), 0.001);
-        assertEquals(bank, createdAccount.getBank());
-        verify(accountRepository).save(any(Account.class));
-    }
 
     @Test
     public void testFindByAccountNumber() {
